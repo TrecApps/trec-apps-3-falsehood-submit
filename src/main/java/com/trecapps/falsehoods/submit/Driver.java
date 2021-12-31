@@ -3,9 +3,11 @@ package com.trecapps.falsehoods.submit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan({"com.trecapps.base.FalsehoodModel","com.trecapps.base.InfoResource"})
+@EnableJpaRepositories(basePackages = {"com.trecapps.base.FalsehoodModel.repos", "com.trecapps.base.InfoResource.repos"})
 public class Driver {
 
     public static void main(String[] args) {
