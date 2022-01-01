@@ -15,17 +15,15 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    AADOAuth2UserService getAadoAuth2UserService(AADAuthenticationProperties aadAuthProps)
+    @Autowired
+    SecurityConfig(AADAuthenticationProperties aadAuthProps,
+                   FalsehoodUserRepo falsehoodUserRepo)
     {
-        return new AADOAuth2UserService(aadAuthProps);
+        aadoAuth2UserService = new AADOAuth2UserService(aadAuthProps);
+        this.falsehoodUserRepo = falsehoodUserRepo;
     }
-
-    @Autowired
-    AADOAuth2UserService aadoAuth2UserService;
-
-    @Autowired
     FalsehoodUserRepo falsehoodUserRepo;
+    AADOAuth2UserService aadoAuth2UserService;
 
     @Override
     protected void configure(HttpSecurity security) throws Exception
