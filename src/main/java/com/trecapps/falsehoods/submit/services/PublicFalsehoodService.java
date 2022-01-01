@@ -5,7 +5,7 @@ import com.trecapps.base.FalsehoodModel.models.*;
 import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRecordsRepo;
 import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRepo;
 import com.trecapps.base.InfoResource.models.Record;
-import com.trecapps.base.InfoResource.config.StorageClient;
+import com.trecapps.falsehoods.submit.config.StorageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
@@ -29,33 +29,33 @@ public class PublicFalsehoodService {
     @Autowired
     StorageClient storageClient;
 
-    public Mono<String> submitFalsehood(FullPublicFalsehood full, String subject)
+    public String submitFalsehood(FullPublicFalsehood full, String subject)
     {
         String contents = full.getContents();
         PublicFalsehood falsehood = full.getMetadata();
         if(contents == null || falsehood == null)
-            return Mono.just("400: Missing details!");
+            return "400: Missing details!";
 
         falsehood.setId(null);
         falsehood.setUserId(subject);
         falsehood = pfRepo.save(falsehood);
         BigInteger fId = falsehood.getId();
-        return storageClient.SubmitDocument("PublicFalsehood-" + fId, contents, subject)
-                .map((String str) ->{
-                    List<Record> records = new ArrayList<>();
-                    records.add(new Record("Event", "Creation", new Date(Calendar.getInstance().getTime().getTime()), 0l, null));
+        storageClient.SubmitDocument("PublicFalsehood-" + fId, contents, subject);
 
-                    PublicFalsehoodRecords newRecords = new PublicFalsehoodRecords(fId,
-                            (byte)fId.divideAndRemainder(BigInteger.valueOf(20))[1].intValue(), records);
+        List<Record> records = new ArrayList<>();
+        records.add(new Record("Event", "Creation", new Date(Calendar.getInstance().getTime().getTime()), 0l, null));
 
-                    try {
-                        cRepos.save(newRecords);
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                        return "Error In Json Processing!";
-                    }
-                    return "";
-                });
+        PublicFalsehoodRecords newRecords = new PublicFalsehoodRecords(fId,
+            (byte)fId.divideAndRemainder(BigInteger.valueOf(20))[1].intValue(), records);
+
+        try {
+            cRepos.save(newRecords);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "Error In Json Processing!";
+        }
+        return "";
+
 
     }
 
@@ -83,27 +83,27 @@ public class PublicFalsehoodService {
         return "";
     }
 
-    public Mono<String> editFalsehoodContents(BigInteger id, String contents, String comment, OidcUser principal)
+    public String editFalsehoodContents(BigInteger id, String contents, String comment, OidcUser principal)
     {
         if(!pfRepo.existsById(id))
-            return Mono.just("404: Falsehood not documented!");
+            return "404: Falsehood not documented!";
 
         PublicFalsehood metadata = pfRepo.getById(id);
         if(!principal.getSubject().equals(metadata.getUserId()))
-            return Mono.just("401: Only the Owner of the Falsehood can change the contents");
+            return "401: Only the Owner of the Falsehood can change the contents";
 
-        return storageClient.SubmitDocument("PublicFalsehood-" + metadata.getId(), contents, principal.getSubject())
-                .map((String str) -> {
-                    try {
-                        PublicFalsehoodRecords records = new PublicFalsehoodRecords(id, (byte)1, cRepos.retrieveRecords(id));
+        storageClient.SubmitDocument("PublicFalsehood-" + metadata.getId(), contents, principal.getSubject());
 
-                        records.getRecords().add(new Record("Event", "Edit", new Date(Calendar.getInstance().getTime().getTime()), 0l, comment));
-                        cRepos.save(records);
-                    } catch(JsonProcessingException ex)
-                    {
-                        return "Json Processing Error Occurred!";
-                    }
-                    return "";
-                });
+        try {
+            PublicFalsehoodRecords records = new PublicFalsehoodRecords(id, (byte)1, cRepos.retrieveRecords(id));
+
+            records.getRecords().add(new Record("Event", "Edit", new Date(Calendar.getInstance().getTime().getTime()), 0l, comment));
+            cRepos.save(records);
+        } catch(JsonProcessingException ex)
+        {
+            return "Json Processing Error Occurred!";
+        }
+        return "";
+
     }
 }

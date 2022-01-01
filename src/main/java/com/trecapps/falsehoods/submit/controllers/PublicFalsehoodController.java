@@ -29,17 +29,15 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
     PublicFalsehoodService publicFalsehoodService;
 
     @PostMapping("/Submit")
-    public Mono<ResponseEntity<String>> submitMediaFalsehood(RequestEntity<FullPublicFalsehood> falsehood,
+    public ResponseEntity<String> submitMediaFalsehood(RequestEntity<FullPublicFalsehood> falsehood,
                                                              @AuthenticationPrincipal OidcUser principal)
     {
         FalsehoodUser user = principal.getClaim("FalsehoodUser");
         if(user.getCredibility() < MIN_CREDIT_SUBMIT_NEW)
-            return Mono.just(new ResponseEntity<String>
+            return new ResponseEntity<String>
                     ("Your Credibility Is too low. Please wait until it is set to five before trying again!",
-                            HttpStatus.FORBIDDEN));
-        return publicFalsehoodService.submitFalsehood(falsehood.getBody(), principal.getSubject())
-                .map((String message) -> super.getResult(message))
-                .onErrorResume((Throwable ex) -> Mono.just(super.getResult(ex.getMessage())));
+                            HttpStatus.FORBIDDEN);
+        return super.getResult(publicFalsehoodService.submitFalsehood(falsehood.getBody(), principal.getSubject()));
     }
 
     @PutMapping("/Metadata")
@@ -57,7 +55,7 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
     }
 
     @PutMapping(value = "/Content", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Mono<ResponseEntity<String>> updateContents(RequestEntity<MultiValueMap<String, String>> request,
+    public ResponseEntity<String> updateContents(RequestEntity<MultiValueMap<String, String>> request,
                                                  @AuthenticationPrincipal OidcUser principal)
     {
         MultiValueMap<String, String> values = request.getBody();
@@ -67,12 +65,10 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
             id = new BigInteger(values.getFirst("Falsehood"));
         } catch (Exception e)
         {
-            return Mono.just(new ResponseEntity<String>("Could not derive an id from the Falsehood field!", HttpStatus.BAD_REQUEST));
+            return new ResponseEntity<String>("Could not derive an id from the Falsehood field!", HttpStatus.BAD_REQUEST);
         }
 
-        return publicFalsehoodService.editFalsehoodContents(id,
-                values.getFirst("Contents"), values.getFirst("Reason"),principal)
-                .map((String message) ->super.getResult(message))
-                .onErrorResume((Throwable ex) -> Mono.just(super.getResult(ex.getMessage())));
+        return super.getResult(publicFalsehoodService.editFalsehoodContents(id,
+                        values.getFirst("Contents"), values.getFirst("Reason"),principal));
     }
 }
