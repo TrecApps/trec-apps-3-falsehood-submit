@@ -10,14 +10,14 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class TrecActiveDirectoryService implements OAuth2UserService<OidcUserRequest, OidcUser> {
 
     AADOAuth2UserService aadoAuth2UserService;
 
     FalsehoodUserRepo falsehoodUserRepo;
 
-    @Autowired
+    //@Autowired
     public TrecActiveDirectoryService(AADOAuth2UserService aadoAuth2UserService1, FalsehoodUserRepo falsehoodUserRepo1)
     {
         aadoAuth2UserService = aadoAuth2UserService1;
