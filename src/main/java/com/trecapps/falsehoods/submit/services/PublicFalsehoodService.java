@@ -2,8 +2,8 @@ package com.trecapps.falsehoods.submit.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trecapps.base.FalsehoodModel.models.*;
-import com.trecapps.base.FalsehoodModel.repos.PublicFalsehoodRecordsRepo;
-import com.trecapps.base.FalsehoodModel.repos.PublicFalsehoodRepo;
+import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRecordsRepo;
+import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRepo;
 import com.trecapps.base.InfoResource.models.Record;
 import com.trecapps.base.InfoResource.config.StorageClient;
 import org.springframework.beans.factory.annotation.Autowired;
