@@ -6,6 +6,8 @@ import com.trecapps.falsehoods.submit.repos.FalsehoodRecordsRepo;
 import com.trecapps.falsehoods.submit.repos.FalsehoodRepo;
 import com.trecapps.base.InfoResource.models.Record;
 import com.trecapps.falsehoods.submit.config.StorageClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class MediaFalsehoodService {
     @Autowired
     StorageClient storageClient;
 
+    Logger logger = LoggerFactory.getLogger(MediaFalsehoodService.class);
+
     public String submitFalsehood(FullFalsehood full, String subject)
     {
         String contents = full.getContents();
@@ -51,7 +55,7 @@ public class MediaFalsehoodService {
             cRepos.save(new FalsehoodRecords(fId,
             (byte)fId.divideAndRemainder(BigInteger.valueOf(20))[1].intValue(), records));
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Error detected in JSON data in Media Falsehood Submission", e);
             return "Error in JSON Records!";
         }
 
@@ -68,6 +72,8 @@ public class MediaFalsehoodService {
         if(!currentFalsehood.getUserId().equals(falsehood.getUserId()))
             return "400: Cannot attempt to change the id of the submitter on the Falsehood!";
 
+        logger.info("Changing metadata of Media Falsehood: {} --> {}", currentFalsehood, falsehood);
+
         falsehood = pfRepo.save(falsehood);
 
         try {
@@ -77,8 +83,10 @@ public class MediaFalsehoodService {
             cRepos.save(records);
         } catch(JsonProcessingException ex)
         {
+            logger.error("JSON Processing error occurred (Media Metadata):", ex);
             return "Json Processing Error Occurred!";
         }
+        logger.info("Media Falsehood entry {} successfully updated", fId);
         return "";
     }
 
@@ -100,8 +108,10 @@ public class MediaFalsehoodService {
             cRepos.save(records);
         } catch(JsonProcessingException ex)
         {
+            logger.error("JSON Processing error occurred (Media Contents):", ex);
             return "Json Processing Error Occurred!";
         }
+        logger.info("Media Falsehood contents {} successfully updated", id);
         return "";
 
 

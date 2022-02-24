@@ -5,6 +5,8 @@ import com.trecapps.base.FalsehoodModel.models.FalsehoodUser;
 import com.trecapps.base.FalsehoodModel.models.FullPublicFalsehood;
 import com.trecapps.base.FalsehoodModel.models.PublicFalsehood;
 import com.trecapps.falsehoods.submit.services.PublicFalsehoodService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,10 +30,13 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
     @Autowired
     PublicFalsehoodService publicFalsehoodService;
 
+    Logger logger = LoggerFactory.getLogger(PublicFalsehoodController.class);
+
     @PostMapping("/Submit")
     public ResponseEntity<String> submitMediaFalsehood(RequestEntity<FullPublicFalsehood> falsehood,
                                                              @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("New Public Falsehood Submission: {}", falsehood.getBody().getMetadata());
         FalsehoodUser user = principal.getClaim("FalsehoodUser");
         if(user.getCredibility() < MIN_CREDIT_SUBMIT_NEW)
             return new ResponseEntity<String>
@@ -44,6 +49,7 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
     public ResponseEntity<String> updateMetadata(RequestEntity<FullPublicFalsehood> falsehood,
                                                  @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("Updating Public Falsehood from Controller");
         FullPublicFalsehood obj = falsehood.getBody();
         PublicFalsehood metaData = obj.getMetadata();
         FalsehoodUser user = principal.getClaim("FalsehoodUser");
@@ -58,6 +64,7 @@ public class PublicFalsehoodController extends FalsehoodControllerBase{
     public ResponseEntity<String> updateContents(RequestEntity<MultiValueMap<String, String>> request,
                                                  @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("Updating Contents of a Public Falsehood");
         MultiValueMap<String, String> values = request.getBody();
         BigInteger id = null;
         try

@@ -4,6 +4,8 @@ import com.trecapps.base.FalsehoodModel.models.Falsehood;
 import com.trecapps.base.FalsehoodModel.models.FalsehoodUser;
 import com.trecapps.base.FalsehoodModel.models.FullFalsehood;
 import com.trecapps.falsehoods.submit.services.MediaFalsehoodService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,10 +29,13 @@ public class MediaFalsehoodController extends FalsehoodControllerBase{
     @Autowired
     MediaFalsehoodService mediaFalsehoodService;
 
+    Logger logger = LoggerFactory.getLogger(MediaFalsehoodController.class);
+
     @PostMapping("/Submit")
     public ResponseEntity<String> submitMediaFalsehood(RequestEntity<FullFalsehood> falsehood,
                                                              @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("New Media Falsehood Submission: {}", falsehood.getBody().getMetadata());
         FalsehoodUser user = principal.getClaim("FalsehoodUser");
         if(user.getCredibility() < MIN_CREDIT_SUBMIT_NEW)
             return new ResponseEntity<String>
@@ -45,6 +50,7 @@ public class MediaFalsehoodController extends FalsehoodControllerBase{
     public ResponseEntity<String> updateMetadata(RequestEntity<FullFalsehood> falsehood,
                                                  @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("Updating Media Falsehood from Controller");
         FullFalsehood obj = falsehood.getBody();
         Falsehood metaData = obj.getMetadata();
         FalsehoodUser user = principal.getClaim("FalsehoodUser");
@@ -59,6 +65,7 @@ public class MediaFalsehoodController extends FalsehoodControllerBase{
     public ResponseEntity<String> updateContents(RequestEntity<MultiValueMap<String, String>> request,
                                                  @AuthenticationPrincipal OidcUser principal)
     {
+        logger.info("Updating Contents of a Media Falsehood");
         MultiValueMap<String, String> values = request.getBody();
         BigInteger id = null;
         try

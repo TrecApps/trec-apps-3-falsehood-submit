@@ -6,6 +6,8 @@ import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRecordsRepo;
 import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRepo;
 import com.trecapps.base.InfoResource.models.Record;
 import com.trecapps.falsehoods.submit.config.StorageClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class PublicFalsehoodService {
     @Autowired
     StorageClient storageClient;
 
+    Logger logger = LoggerFactory.getLogger(PublicFalsehoodService.class);
+
     public String submitFalsehood(FullPublicFalsehood full, String subject)
     {
         String contents = full.getContents();
@@ -51,7 +55,7 @@ public class PublicFalsehoodService {
         try {
             cRepos.save(newRecords);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("Error detected in JSON data in Public Falsehood Submission", e);
             return "Error In Json Processing!";
         }
         return "";
@@ -69,6 +73,7 @@ public class PublicFalsehoodService {
         if(!currentFalsehood.getUserId().equals(falsehood.getUserId()))
             return "400: Cannot attempt to change the id of the submitter on the Falsehood!";
 
+        logger.info("Changing metadata of Public Falsehood: {} --> {}", currentFalsehood, falsehood);
         falsehood = pfRepo.save(falsehood);
 
         try {
@@ -78,8 +83,10 @@ public class PublicFalsehoodService {
             cRepos.save(records);
         } catch(JsonProcessingException ex)
         {
+            logger.error("JSON Processing error occurred (Public Metadata):", ex);
             return "Json Processing Error Occurred!";
         }
+        logger.info("Public Falsehood metadata {} successfully updated", fId);
         return "";
     }
 
@@ -101,8 +108,10 @@ public class PublicFalsehoodService {
             cRepos.save(records);
         } catch(JsonProcessingException ex)
         {
+            logger.error("JSON Processing error occurred (Public Contents):", ex);
             return "Json Processing Error Occurred!";
         }
+        logger.info("Public Falsehood contents {} successfully updated", id);
         return "";
 
     }
