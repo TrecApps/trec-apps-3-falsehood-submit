@@ -1,6 +1,7 @@
 package com.trecapps.falsehoods.submit.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.trecapps.auth.models.TcUser;
 import com.trecapps.base.FalsehoodModel.models.*;
 import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRecordsRepo;
 import com.trecapps.falsehoods.submit.repos.PublicFalsehoodRepo;
@@ -90,16 +91,16 @@ public class PublicFalsehoodService {
         return "";
     }
 
-    public String editFalsehoodContents(BigInteger id, String contents, String comment, OidcUser principal)
+    public String editFalsehoodContents(BigInteger id, String contents, String comment, TcUser principal)
     {
         if(!pfRepo.existsById(id))
             return "404: Falsehood not documented!";
 
         PublicFalsehood metadata = pfRepo.getById(id);
-        if(!principal.getSubject().equals(metadata.getUserId()))
+        if(!principal.getId().equals(metadata.getUserId()))
             return "401: Only the Owner of the Falsehood can change the contents";
 
-        storageClient.SubmitDocument("PublicFalsehood-" + metadata.getId(), contents, principal.getSubject());
+        storageClient.SubmitDocument("PublicFalsehood-" + metadata.getId(), contents, principal.getId());
 
         try {
             PublicFalsehoodRecords records = new PublicFalsehoodRecords(id, (byte)1, cRepos.retrieveRecords(id));
