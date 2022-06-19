@@ -3,9 +3,9 @@ package com.trecapps.falsehoods.submit.repos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trecapps.base.FalsehoodModel.models.PublicFalsehoodRecords;
-import com.trecapps.base.InfoResource.models.Record;
 import com.trecapps.falsehoods.submit.config.StorageClient;
+import com.trecapps.falsehoods.submit.models.PublicFalsehoodRecords;
+import com.trecapps.falsehoods.submit.models.Record;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class PublicFalsehoodRecordsRepo// extends CosmosRepository<PublicFalseho
 
         String name = "Public-Falsehood-Records-" + records.getFalsehoodId();
 
-        client.SubmitJson(name, mapper.writeValueAsString(records.getRecords()), "Trec-Apps-Falsehood", "Falsehood");
+        client.SubmitJson(name, mapper.writeValueAsString(records.getRecords()));
     }
 
     public List<Record> retrieveRecords(BigInteger id) throws JsonProcessingException {

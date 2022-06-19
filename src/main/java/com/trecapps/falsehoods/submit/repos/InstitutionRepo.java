@@ -1,6 +1,6 @@
 package com.trecapps.falsehoods.submit.repos;
 
-import com.trecapps.base.InfoResource.models.Institution;
+import com.trecapps.falsehoods.submit.models.Institution;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
