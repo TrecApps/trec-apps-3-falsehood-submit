@@ -48,6 +48,8 @@ public class LoginController {
         String userToken = jwtTokenService.generateToken(account, null);
         String refreshToken = jwtTokenService.generateRefreshToken(account);
 
+        logger.info("User {} logging in as {}", login.getUsername(), account.getId());
+
         if(userToken == null)
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -68,6 +70,7 @@ public class LoginController {
     @GetMapping("/user")
     public ResponseEntity getUser() {
         TrecAuthentication trecAuth = (TrecAuthentication) SecurityContextHolder.getContext().getAuthentication();
+        logger.info("Trec Account Detected: {}", trecAuth.getAccount().getId());
         try {
             return new ResponseEntity<>(userStorageService.retrieveUser(trecAuth.getAccount().getId()), HttpStatus.OK);
         } catch (JsonProcessingException e) {
