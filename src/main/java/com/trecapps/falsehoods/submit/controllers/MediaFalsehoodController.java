@@ -24,8 +24,8 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigInteger;
 
-@RestController
-@RequestMapping("/Update/Media")
+//@RestController
+//@RequestMapping("/Update/Media")
 public class MediaFalsehoodController extends FalsehoodControllerBase{
 
 

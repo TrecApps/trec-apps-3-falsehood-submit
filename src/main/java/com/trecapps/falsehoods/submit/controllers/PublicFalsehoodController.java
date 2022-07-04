@@ -24,8 +24,8 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigInteger;
 
-@RestController
-@RequestMapping("/Update/Public")
+//@RestController
+//@RequestMapping("/Update/Public")
 public class PublicFalsehoodController extends FalsehoodControllerBase{
 
 

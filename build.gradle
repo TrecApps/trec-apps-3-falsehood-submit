@@ -17,8 +17,7 @@ ext {
 }
 
 jar{
-    archiveClassifier=''
-    enabled = true
+    enabled = false
 }
 
 repositories {
@@ -39,7 +38,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     //Enable Trec-Auth
-    implementation 'com.trecapps.auth:TrecAuth:0.0.18'
+    implementation 'com.trecapps.auth:TrecAuth:0.0.20'
 //    implementation 'com.trecapps.base:InfoResource:0.1.2'
 //    implementation 'com.trecapps.base:FalsehoodModel:0.1.8'
 
