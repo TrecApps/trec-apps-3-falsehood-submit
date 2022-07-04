@@ -45,7 +45,7 @@ public class LoginController {
             logger.info("Null account detected!");
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
-        String userToken = jwtTokenService.generateToken(account, null);
+        String userToken = jwtTokenService.generateToken(account, null,null);
         String refreshToken = jwtTokenService.generateRefreshToken(account);
 
         logger.info("User {} logging in as {}", login.getUsername(), account.getId());
