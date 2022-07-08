@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity security) throws Exception
     {
         security.csrf().disable().authorizeRequests()
-                .antMatchers("/Auth/user","/Update/**").authenticated()
+                .antMatchers("/Auth/user","/Update/**").hasAuthority("EMAIL_VERIFIED")
                 .antMatchers("/**").permitAll()
                 .and()
                 .userDetailsService(trecAccountService)
