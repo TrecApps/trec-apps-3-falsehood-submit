@@ -2,10 +2,11 @@ package com.trecapps.falsehoods.submit.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.trecapps.auth.models.TcUser;
-import com.trecapps.falsehoods.submit.models.Falsehood;
-import com.trecapps.falsehoods.submit.models.FalsehoodRecords;
-import com.trecapps.falsehoods.submit.models.FullFalsehood;
-import com.trecapps.falsehoods.submit.models.Record;
+
+import com.trecapps.base.FalsehoodModel.models.Falsehood;
+import com.trecapps.base.FalsehoodModel.models.FalsehoodRecords;
+import com.trecapps.base.FalsehoodModel.models.FullFalsehood;
+import com.trecapps.base.InfoResource.models.Record;
 import com.trecapps.falsehoods.submit.repos.FalsehoodRecordsRepo;
 import com.trecapps.falsehoods.submit.repos.FalsehoodRepo;
 import com.trecapps.falsehoods.submit.config.StorageClient;
